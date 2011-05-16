@@ -1,0 +1,9 @@
+<div class='admin_content'>
+  <% admin_form_for :video, @video, :multipart=>true do |f| -%>
+    <%= f.text_field :name, :required => true %>
+    <%= f.text_field :email, :required => true %>
+    <%= f.text_area :description, :rows => 8, :cols => 40 %>
+    <%= f.filemanager_file :file_id %>
+    <%= f.cancel_submit_buttons 'Cancel','Submit' %>
+  <% end -%>
+</div>

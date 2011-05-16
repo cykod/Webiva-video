@@ -1,0 +1,12 @@
+<div class='admin_content'>
+<% admin_form_for :options, @options do |f| -%>
+  <%= f.select :provider, [['YouTube', 'youtube']], :include_blank=>true, :label => 'Video provider service' %>
+  <%= f.text_field :developer_key, :label => 'Developer key' %>
+  <%= f.text_field :user_name, :label => 'User' %>
+  <%= f.password_field :password, :label => 'Password' %>
+  <%= f.select :email_template_id, MailTemplate.site_template_options, :include_blank => true %>
+  
+<%= f.submit_tag 'Save' %>
+
+<%  end -%>
+</div>
