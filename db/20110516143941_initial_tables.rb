@@ -5,6 +5,8 @@ class InitialTables < ActiveRecord::Migration
       t.text :description
       t.integer :end_user_id, :file_id
       t.boolean :featured, :default => false
+      t.integer :moderated, :default => 0
+      t.boolean :featured, :default => false
       t.timestamps
     end
     add_index :video_videos, :email, :name => 'email'

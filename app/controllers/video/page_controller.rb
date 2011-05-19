@@ -2,28 +2,28 @@ class Video::PageController < ParagraphController
 
   editor_header 'Video Paragraphs'
   
-  editor_for :list, :name => "List", :feature => :video_page_list
-  editor_for :edit, :name => "Edit", :feature => :video_page_edit, :inputs => [[ :video_id, "Video Id", :path ]] 
+  editor_for :user_list, :name => "User List", :feature => :video_page_user_list
+  editor_for :user_view, :name => "User View", :feature => :video_page_user_view, :inputs => [[ :video_id, "Video Id", :path ]] 
 
-  class ListOptions < HashModel
+  class UserListOptions < HashModel
     # Paragraph Options
-    attributes :edit_page_id => nil
+    attributes :user_view_page_id => nil
 
-    page_options :edit_page_id
+    page_options :user_view_page_id
 
     options_form(
-                  fld(:edit_page_id, :page_selector) # <attribute>, <form element>, <options>
+                  fld(:user_view_page_id, :page_selector) # <attribute>, <form element>, <options>
                  )
   end
 
-  class EditOptions < HashModel
+  class UserViewOptions < HashModel
     # Paragraph Options
-    attributes :list_page_id => nil
+    attributes :user_list_page_id => nil
 
-    page_options :list_page_id
+    page_options :user_list_page_id
 
     options_form(
-                  fld(:list_page_id, :page_selector) # <attribute>, <form element>, <options>
+                  fld(:user_list_page_id, :page_selector) # <attribute>, <form element>, <options>
                  )
   end
 
