@@ -16,7 +16,7 @@ class VideoVideo < DomainModel
     self.name = self.file.name
   end
 
-  def load_video
+  def upload_video
     provider_connect 
     video = @client.video_upload(File.open(self.file.filename), :title => self.file.name, :category => 'People')
     self.provider_file_id = video.unique_id

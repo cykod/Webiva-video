@@ -6,10 +6,19 @@ class Video::ManageController < ModuleController
   cms_admin_paths "content",
     "Video" =>  {:action => 'index'}
 
-  def index
-    cms_page_path ["Content"], "Video"
-  end      
+  active_table :video_table, VideoVideo, 
+     [:check, :name, :featured, :description, :email, :created_at]
 
+  def display_video_table(display=true)
+    @tbl = video_table_generate(params,:order => 'created_at DESC')
+    render :partial => 'video_table' if display
+  end
+
+  def index
+    cms_page_path ["Content"], "Video Demo"
+    display_video_table(false)
+  end
+  
   def edit
     @video = VideoVideo.find_by_id(params[:path][0]) || VideoVideo.new
     cms_page_path ["Content","Video"], 

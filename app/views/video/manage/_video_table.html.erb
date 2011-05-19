@@ -1,0 +1,10 @@
+<% active_table_for :video_table, @tbl do |t| -%>
+  <% active_tr 'video',t.id do |tr| -%>
+    <td><%= tr.checkbox -%></td>
+    <td><%= link_to h(t.name), :action => 'edit',:path => [ t.id ] -%></td>
+    <td><%= t.featured -%></td>
+    <td><%= t.description -%></td>
+    <td><%= t.email -%></td>
+    <td><%= t.created_at.to_s(:short) -%></td>
+  <% end -%>
+<% end -%>
