@@ -8,6 +8,8 @@ class VideoVideo < DomainModel
   before_create :generate_video_hash, :assign_name
   after_update :update_meta_data
 
+  named_scope :with_end_user, lambda { |user| {:conditions => {:end_user_id=>user.id} } }
+
   def generate_video_hash
     self.video_hash = DomainModel.generate_hash
   end

@@ -1,6 +1,6 @@
 class Video::EditFeature < ParagraphFeature
 
-  feature :video_page_list, :default_feature => <<-FEATURE
+  feature :video_edit_list, :default_feature => <<-FEATURE
     <cms:video_table style='width:100%'>
       <cms:row>
         <td><cms:checkbox/></td>
@@ -9,8 +9,8 @@ class Video::EditFeature < ParagraphFeature
     </cms:video_table>
    FEATURE
 
-  def video_page_list_feature(data)
-    webiva_feature(:video_page_list) do |c|
+  def video_edit_list_feature(data)
+    webiva_feature(:video_edit_list) do |c|
       c.end_user_table_tag('video_table','video',:container_id => "cmspara_#{paragraph.id}", :no_pages => data[:mini] ? true : nil,
                            :actions => data[:mini] ? nil : [['Delete','delete','Delete the selected videos?']]) { |t| data[:tbl] }
       c.link_tag('video_table:row:edit') { |t| "#{data[:options].edit_page_url}/#{t.locals.video.id}" }
@@ -19,7 +19,7 @@ class Video::EditFeature < ParagraphFeature
 
   end
 
-  feature :video_page_edit, :default_feature =>  <<-FEATURE
+  feature :video_edit_edit, :default_feature =>  <<-FEATURE
       <cms:form>
         <cms:errors>
           <div class='error'>
@@ -38,8 +38,8 @@ class Video::EditFeature < ParagraphFeature
   FEATURE
 
 
-  def video_page_edit_feature(data)
-    webiva_feature(:video_page_edit) do |c|
+  def video_edit_edit_feature(data)
+    webiva_feature(:video_edit_edit) do |c|
       c.form_for_tag('form','video') { |t| data[:video] }
       c.form_error_tag('form:errors')
       c.field_tag('form:name')

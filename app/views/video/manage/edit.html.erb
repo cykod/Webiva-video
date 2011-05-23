@@ -2,6 +2,7 @@
   <% admin_form_for :video, @video, :multipart=>true do |f| -%>
     <%= f.text_field :name, :required => true %>
     <%= f.text_field :email, :required => true %>
+    <%= f.radio_buttons :featured, [['Yes',true],['No',false]], :description => 'List video on the featured video page' %>
     <%= f.text_area :description, :rows => 8, :cols => 40 %>
     <%= f.filemanager_file :file_id %>
     <%= f.cancel_submit_buttons 'Cancel','Submit' %>

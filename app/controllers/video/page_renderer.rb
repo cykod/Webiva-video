@@ -11,6 +11,7 @@ class Video::PageRenderer < ParagraphRenderer
     @tbl = end_user_table( :video_table,
                           VideoVideo,
                           [ 
+                            EndUserTable.column(:blank),
                             EndUserTable.column(:string,'videos.name',:label => 'Video Name'),
                             EndUserTable.column(:string,'videos.featured',:label => 'Featured')
                           ]

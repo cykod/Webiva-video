@@ -9,7 +9,7 @@ class Video::EditRenderer < ParagraphRenderer
     @options = paragraph_options :list
 
     @tbl = end_user_table( :video_list,
-                          VideoVideo,
+                          VideoVideo.with_end_user(myself),
                           [ 
                             EndUserTable.column(:blank),
                             EndUserTable.column(:string,'videos.name',:label => 'Video Name')
@@ -18,7 +18,7 @@ class Video::EditRenderer < ParagraphRenderer
                              
     end_user_table_generate @tbl
 
-    render_paragraph :feature => :video_page_list
+    render_paragraph :feature => :video_edit_list
   end
 
   def edit
@@ -43,12 +43,12 @@ class Video::EditRenderer < ParagraphRenderer
 
     if params[:video]
       if @video.update_attributes(params[:video])
-        #redirect to index        
+        #redirect to index   
         redirect_paragraph @options.list_page_url and return
       end
     end
 
-    render_paragraph :feature => :video_page_edit
+    render_paragraph :feature => :video_edit_edit
 
   end
 

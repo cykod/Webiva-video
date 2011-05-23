@@ -2,8 +2,8 @@ class Video::EditController < ParagraphController
 
   editor_header 'Video Paragraphs'
   
-  editor_for :list, :name => "Editor List", :feature => :video_page_list
-  editor_for :edit, :name => "Edit", :feature => :video_page_edit, :inputs => [[ :video_id, "Video Id", :path ]] 
+  editor_for :list, :name => "Editor List", :feature => :video_edit_list
+  editor_for :edit, :name => "Edit", :feature => :video_edit_edit, :inputs => [[ :video_id, "Video Id", :path ]] 
 
   class ListOptions < HashModel
     # Paragraph Options
