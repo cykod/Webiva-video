@@ -4,20 +4,14 @@ class Video::PageRenderer < ParagraphRenderer
 
   paragraph :user_list
   paragraph :user_view
+  paragraph :search
 
   def user_list
     @options = paragraph_options :user_list
 
-    @tbl = end_user_table( :video_table,
-                          VideoVideo,
-                          [ 
-                            EndUserTable.column(:blank),
-                            EndUserTable.column(:string,'videos.name',:label => 'Video Name'),
-                            EndUserTable.column(:string,'videos.featured',:label => 'Featured')
-                          ]
-                         )
-                             
-    end_user_table_generate @tbl
+    scope = VideoVideo
+    @pages, @videos = VideoVideo.paginate(params[:page],
+                                          :order => 'featured DESC,created_at DESC', :per_page => @options.per_page)
 
     render_paragraph :feature => :video_page_user_list
   end
@@ -34,6 +28,22 @@ class Video::PageRenderer < ParagraphRenderer
 
     render_paragraph :feature => :video_page_user_view
 
+  end
+
+
+  class VideoSearch < HashModel
+    attributes :query => nil, :category => nil, :tags => nil
+
+
+  end
+
+  def search
+
+    @search = new VideoSearch(params[:search])
+
+    if params[:search] 
+      @pages, @results = @
+     @vVideoVideo.search(@search.to_hash)
   end
 
 end

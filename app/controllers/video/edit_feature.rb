@@ -27,12 +27,14 @@ class Video::EditFeature < ParagraphFeature
           <cms:value/>
           </div>
         </cms:errors>
-        <div class='label'>Name:</div>
-        <cms:name/><br/>
-        <div class='label'>Description:</div>
-        <cms:description/><br/>
-        <div class='label'>Keywords:</div>
-        <cms:tag_names/><br/>
+        <ol>
+         <li><cms:name_label/><cms:name/></li>
+         <li><cms:category_label/><cms:category/></li>
+         <li>Description:<cms:description_option/>
+             <cms:description_other/>
+         </li>
+         <li>Keywords:<cms:tag_names/></li>
+        </ol>
         <cms:save/>
       </cms:form>
   FEATURE
@@ -43,7 +45,10 @@ class Video::EditFeature < ParagraphFeature
       c.form_for_tag('form','video') { |t| data[:video] }
       c.form_error_tag('form:errors')
       c.field_tag('form:name')
-      c.field_tag('form:description')
+      c.field_tag('form:category', :control => :radio_buttons, :separator => "<br/>")   { |t| Video::AdminController.module_options.category_options }
+      c.field_tag('form:description_option', :control => :radio_buttons, :separator => "<br/>" ) { |t|  Video::AdminController.module_options.descriptions_options + [['Other','other']] }
+
+      c.field_tag('form:description_other', :onfocus => "document.getElementById('video_description_option_other').checked = true")
       c.field_tag('form:tag_names',:size => 50)
       c.submit_tag('form:save')        
     end

@@ -2,7 +2,7 @@
 class Video::AdminController < ModuleController
 
   component_info 'Video', :description => 'Video support', 
-                              :access => :public
+                              :access => :private
                               
   # Register a handler feature
   register_permission_category :video, "Video" ,"Permissions related to Video"
@@ -19,12 +19,16 @@ class Video::AdminController < ModuleController
 
   content_model :videos
 
+  content_node_type "Videos", "VideoVideo",  :search => true, :editable => false, :title_field => :name, :url_field => :id
+
+
   def self.get_videos_info
     [ { :name => 'Video management', 
       :permission => :video_manage,
       :url => { :controller => 'video/manage' } 
     } ]
   end
+
 
   public 
  
@@ -47,16 +51,33 @@ class Video::AdminController < ModuleController
   end
   
   class Options < HashModel
-    attributes :provider => 'Select video service provider'
-    attributes :developer_key => 'Enter developer key'
-    attributes :user_name => 'Enter user name'
-    attributes :password => 'Password'
-    attributes :email_template_id => 'Select email template'
+    attributes :provider => 'Select video service provider',
+                :developer_key => 'Enter developer key',
+                :user_name => 'Enter user name',
+                :password => 'Password',
+                :email_template_id => 'Select email template',
+                :edit_page_url => nil, 
+                :categories => nil,
+                :descriptions => nil
+
     validates_presence_of :developer_key
     validates_presence_of :user_name
     validates_presence_of :password
     validates_presence_of :provider
     validates_presence_of :email_template_id
+
+    def category_options
+      self.categories.to_s.split("\n").map(&:strip).reject(&:blank?)
+    end
+
+    def descriptions_options
+      self.descriptions.to_s.split("\n").map(&:strip).reject(&:blank?)
+    end
+
+
+    def email_template
+      @email_template ||= MailTemplate.find_by_id(self.email_template_id)
+    end
   end
 
 end

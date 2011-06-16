@@ -7,8 +7,46 @@ class VideoVideo < DomainModel
 
   before_create :generate_video_hash, :assign_name
   after_update :update_meta_data
+  after_create :send_email
 
   named_scope :with_end_user, lambda { |user| {:conditions => {:end_user_id=>user.id} } }
+
+  content_node :push_value => true 
+
+  attr_accessor :description_other
+
+  named_scope(:by_category, Proc.new { |cat| 
+    {:conditions => { :category => cat } }
+  });
+
+  named_scope(:by_content, Proc.new { |keyword|
+    { :conditions => [ 'MATCH (content_node_values.title,content_node_values.body) AGAINST (? IN BOOLEAN MODE)',keyword ],
+      :joins => { :content_node => :content_node_values }
+    }
+  })
+
+  named_scope(:by_tags, Proc.new { |tags|
+     tags = ContentTag.find(:all,:conditions => { :name =>  tags, :content_type => 'VideoVideo' })
+
+     if tags.length > 0
+       { :select => 'DISTINCT video_videos.*',
+         :conditions => [ 'content_tag_tags.content_tag_id IN (?)',tags.map(&:id) ],
+         :joins => [ :content_tag_tags ] }
+     else 
+        {}
+     end
+  })
+
+
+  def self.search(page,options) 
+    scope = VideoVideo
+
+    scope = scope.by_content(options[:query]) if options[:query].present?
+    scope = scope.by_category(options[:category]) if options[:category].present?
+    scope = scope.by_tags(options[:tags]) if options[:tags].present? && options[:tags].reject(&:blank?).length > 0
+
+    scope.paginate(page)
+  end
 
   def generate_video_hash
     self.video_hash = DomainModel.generate_hash
@@ -22,8 +60,52 @@ class VideoVideo < DomainModel
     provider_connect         
     video = @client.video_upload(File.open(self.file.filename), :title => self.file.name, :category => 'People', :list => self.moderate_value)
     self.provider_file_id = video.unique_id
+    self.provider = 'youtube'
     self.save
+
+    self.send_email
+
+
     return self.provider_file_id
+  end
+
+  def content_node_body(language) 
+    ((self.attributes.slice('name','created_at','category','description')).values + [ self.tag_names ]).join(" ")
+  end
+
+  def content_description(language)
+    "Video - %s" / self.category.to_s
+  end
+
+  def self.content_admin_url(item_id) #:nodoc:
+     {:controller => '/video/manage', :action => 'edit',
+      :path => [ item_id ] }
+  end
+
+
+  def description_option
+    return '' if self.description.blank?
+    if Video::AdminController.module_options.descriptions_options.include?(self.description)
+      self.description
+    else
+      'other'
+    end
+  end
+
+  def description_option=(val)
+    @description_option = self.description = val unless val == 'other'
+  end
+
+  def description_other
+    if Video::AdminController.module_options.descriptions_options.include?(self.description)
+      ""
+    else
+      self.description
+    end
+  end
+
+  def description_other=(val)
+    self.description = val unless val.blank? || @description_option
   end
 
   def update_meta_data
@@ -43,5 +125,20 @@ class VideoVideo < DomainModel
       return 'denied'
     end
   end  
+
+  def send_email
+    opts = Video::AdminController.module_options
+    if(opts.email_template)
+      atr = self.attributes
+      atr['url'] = Configuration.domain_link(SiteNode.link(opts.edit_page_url,self.id.to_s)) + "?video_hash=#{self.video_hash}"
+      atr['link'] = "<a href='#{atr['url']}'>#{atr['url']}</a>"
+      opts.email_template.deliver_to_address(self.email,atr)
+    end
+  end
+
+
+  def handle_video_upload(args = {})
+    self.upload_video
+  end
 
 end

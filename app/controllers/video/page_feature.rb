@@ -1,26 +1,27 @@
 class Video::PageFeature < ParagraphFeature
 
   feature :video_page_user_list, :default_feature => <<-FEATURE
-    <cms:video_table style='width:100%'>
-      <cms:row>
-        <td><cms:image /></td>
-        <td style='text-align:center'><cms:edit_link><cms:name/></cms:edit_link></td>
-      </cms:row>
-    </cms:video_table>
+    <cms:videos>
+      <cms:video>
+        <cms:image/> <cms:detail_link><cms:name/></cms:detail_link>
+        <cms:player/>
+      </cms:video>
+    </cms:videos>
    FEATURE
 
   def video_page_user_list_feature(data)
-    webiva_feature(:video_page_user_list) do |c|
-      c.end_user_table_tag('video_table','video',:container_id => "cmspara_#{paragraph.id}", :no_pages => data[:mini] ? true : nil) { |t| data[:tbl] }
-      c.define_tag('video_table:row:image') { |t| image_tag "http://img.youtube.com/vi/#{t.locals.video.provider_file_id}/0.jpg", :width => '80'  } 
-      c.link_tag('video_table:row:edit') { |t| "#{data[:options].user_view_page_url}/#{t.locals.video.id}" }
-      c.value_tag('video_table:row:name') { |t| h t.locals.video.name }
+    webiva_feature(:video_page_user_list,data) do |c|
+      c.loop_tag('video') { |t| data[:videos] }
+      define_video_detail_tags(c)
+      c.link_tag('video:detail') { |t| data[:options].detail_page_node.link(t.locals.video_id) if data[:options].detail_page_node } 
+      c.pagelist_tag('videos:pages') { |t| data[:pages] }
     end
 
   end
 
   
   feature :video_page_user_view, :default_feature =>  <<-FEATURE
+  <cms:video>
     <div class='video'>
       <h1><cms:name/></h1>
     </div>
@@ -29,23 +30,34 @@ class Video::PageFeature < ParagraphFeature
       Description <cms:description /><br/>
     </div>
     <div class='video_frame'>
-       <cms:video/>
+       <cms:player/>
     </div>
+  </cms:video>
     <div style='clear:both;'></div>
   FEATURE
   
   def video_page_user_view_feature(data)
     webiva_feature(:video_page_user_view) do |c|
-      c.link_tag('user_list_page') { |tag| data[:video] }
-      c.value_tag('name') { |tag| data[:video].name }
-      c.value_tag('created_at') { |tag| data[:video].created_at }
-      c.value_tag('user') { |tag| data[:video].end_user ? data[:video].end_user.name : data[:video].email } 
-      c.value_tag('description') { |tag| data[:video].description }
-      c.define_tag('video') { |tag| 
-         "<iframe width='425' height='350' src='http://www.youtube.com/embed/#{data[:video].provider_file_id}?rel=0' frameborder='0' allowfullscreen></iframe>"
-      }
+      c.expansion_tag('video') { |t| t.locals.video = data[:video] }
+      define_video_detail_tags(c)
     end  
   end   
+
+
+  def define_video_detail_tags(c) 
+      c.h_tag('video:name') { |tag| t.locals.video.name }
+      c.datetime_tag('video:created_at') { |tag| t.locals.video.created_at }
+      c.h_tag('video:description',:format => 'simple') { |tag| t.locals.video.description }
+      c.h_tag('video:user') { |tag| t.locals.video.end_user ? t.locals.video.end_user.name : ''} 
+      c.define_tag('video:image') { |t| image_tag "http://img.youtube.com/vi/#{t.locals.video.provider_file_id}/0.jpg", t.attr  } 
+      c.h_tag('video:name') { |t| h t.locals.video.name }
+      c.define_tag('video:player') { |t| 
+         width = t.attr['width'] || 425
+         height = t.attr['height'] || 350
+         "<iframe width='#{width}' height='#{height}' src='http://www.youtube.com/embed/#{t.locals.video.provider_file_id}?rel=0' frameborder='0' allowfullscreen></iframe>"
+      }
+
+  end
   
 
 end

@@ -15,7 +15,7 @@ class Video::ManageController < ModuleController
   end
 
   def index
-    cms_page_path ["Content"], "Video Demo"
+    cms_page_path ["Content"], "Video"
     display_video_table(false)
   end
   
