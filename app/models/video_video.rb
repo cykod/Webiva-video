@@ -7,7 +7,6 @@ class VideoVideo < DomainModel
 
   before_create :generate_video_hash, :assign_name
   after_update :update_meta_data
-  after_create :send_email
 
   named_scope :with_end_user, lambda { |user| {:conditions => {:end_user_id=>user.id} } }
   named_scope :approved , { :conditions => ['moderated > 0'] }
@@ -113,12 +112,6 @@ class VideoVideo < DomainModel
   def description_option
     return '' if self.description.blank?
     if Video::AdminController.module_options.descriptions_options.include?(self.description)
-      c.h_tag('video:name') { |tag| t.locals.video.name }
-      c.datetime_tag('video:created_at') { |t| t.locals.video.created_at }
-      c.h_tag('video:description',:format => 'simple') { |tag| t.locals.video.description }
-      c.h_tag('video:user') { |tag| t.locals.video.end_user ? t.locals.video.end_user.name : ''} 
-      c.define_tag('video:image') { |t| image_tag "http://img.youtube.com/vi/#{t.locals.video.provider_file_id}/0.jpg", t.attr  } 
-      c.h_tag('video:name') { |t| h t.locals.video.name }
       self.description
     else
       'other'
