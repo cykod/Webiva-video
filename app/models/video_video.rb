@@ -14,6 +14,8 @@ class VideoVideo < DomainModel
 
   content_node :push_value => true 
 
+  has_options :moderated, [['Unmoderated',0],['Approved',1],['Rejected',-1],['Error',-2]]
+
   attr_accessor :description_other
 
   named_scope(:by_category, Proc.new { |cat| 
@@ -40,7 +42,7 @@ class VideoVideo < DomainModel
 
 
   def self.search(page,options) 
-    scope = VideoVideo
+    scope = VideoVideo.approved
 
     scope = scope.by_content(options[:query]) if options[:query].present?
     scope = scope.by_category(options[:category]) if options[:category].present?
@@ -55,6 +57,14 @@ class VideoVideo < DomainModel
 
   def feature
     self.update_attribute('featured',true)
+  end
+
+  def approve 
+    self.update_attribute('moderated',1)
+  end
+
+  def unapprove 
+    self.update_attribute('moderated',-1)
   end
 
   def self.category_options
@@ -74,6 +84,10 @@ class VideoVideo < DomainModel
     video = @client.video_upload(File.open(self.file.filename), :title => self.file.name, :category => 'People', :list => self.moderate_value)
     self.provider_file_id = video.unique_id
     self.provider = 'youtube'
+    if(video) 
+      self.file.destroy
+      self.file_id = nil
+    end
     self.save
 
     self.send_email
@@ -129,7 +143,11 @@ class VideoVideo < DomainModel
 
   def update_meta_data
     provider_connect 
-    @client.video_update(self.provider_file_id,:title => self.name, :description => self.description, :category => 'People', :keywords => self.tags_array, :list => self.moderate_value)
+    begin
+      @client.video_update(self.provider_file_id,:title => self.name, :description => self.description, :category => 'People', :keywords => self.tags_array, :list => self.moderate_value)
+    rescue Exception => e
+      self.update_attribute(:moderated,-2)
+    end
   end
 
   def provider_connect

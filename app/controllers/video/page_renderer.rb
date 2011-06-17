@@ -10,7 +10,7 @@ class Video::PageRenderer < ParagraphRenderer
     @options = paragraph_options :user_list
 
     scope = VideoVideo
-    @pages, @videos = VideoVideo.paginate(params[:page],
+    @pages, @videos = VideoVideo.approved.paginate(params[:page],
                                           :order => 'featured DESC,created_at DESC', :per_page => @options.per_page)
 
     render_paragraph :feature => :video_page_user_list
@@ -23,7 +23,7 @@ class Video::PageRenderer < ParagraphRenderer
       @video = VideoVideo.find(:first)
     else
       conn_type,conn_id = page_connection
-      @video = VideoVideo.find(conn_id)
+      @video = VideoVideo.approved.find(conn_id)
     end
 
     render_paragraph :feature => :video_page_user_view

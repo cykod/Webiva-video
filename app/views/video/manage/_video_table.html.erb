@@ -1,4 +1,4 @@
-<% active_table_for :video_table, @tbl, :actions => [[ 'Feature','feature' ], ['Delete','delete','Are you sure you want to delete the selected videos?' ]] do |t| -%>
+<% active_table_for :video_table, @tbl, :actions => [[ 'Feature','feature' ], ['Approve','approve'],['Unapprove','unapprove']], :more_actions => [['Delete','delete','Are you sure you want to delete the selected videos?' ]] do |t| -%>
   <% active_tr 'video',t.id do |tr| -%>
     <td><%= tr.checkbox -%></td>
     <td><%= link_to h(t.name), :action => 'edit',:path => [ t.id ] -%></td>
@@ -6,5 +6,6 @@
     <td><%= t.description -%></td>
     <td><%= t.email -%></td>
     <td><%= t.created_at.to_s(:short) -%></td>
+    <td><%= t.moderated_display  -%></td>
   <% end -%>
 <% end -%>

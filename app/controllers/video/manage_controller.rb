@@ -7,13 +7,14 @@ class Video::ManageController < ModuleController
     "Video" =>  {:action => 'index'}
 
   active_table :video_table, VideoVideo, 
-     [:check, :name, :featured, :description, :email, :created_at]
+     [:check, :name, :featured, :description, :email, :created_at, :moderated]
 
   def display_video_table(display=true)
 
     active_table_action('video') do |act,vids|
       case act
       when 'approve': VideoVideo.find(vids).map(&:approve)
+      when 'unapprove': VideoVideo.find(vids).map(&:unapprove)
       when 'feature': VideoVideo.find(vids).map(&:feature)
       when 'delete': VideoVideo.find(vids).map(&:destroy)
       end
