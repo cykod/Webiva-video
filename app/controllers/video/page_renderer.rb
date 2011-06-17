@@ -38,12 +38,17 @@ class Video::PageRenderer < ParagraphRenderer
   end
 
   def search
+    @options = paragraph_options :search
 
-    @search = new VideoSearch(params[:search])
+    @search = VideoSearch.new(params[:q])
 
-    if params[:search] 
-      @pages, @results = @
-     @vVideoVideo.search(@search.to_hash)
+    if params[:q] 
+      @searching = true
+      @pages, @videos =VideoVideo.search(params[:page],@search.to_hash)
+    end
+
+    render_paragraph :feature => :video_page_search
+
   end
 
 end

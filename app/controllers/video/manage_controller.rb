@@ -10,6 +10,16 @@ class Video::ManageController < ModuleController
      [:check, :name, :featured, :description, :email, :created_at]
 
   def display_video_table(display=true)
+
+    active_table_action('video') do |act,vids|
+      case act
+      when 'approve': VideoVideo.find(vids).map(&:approve)
+      when 'feature': VideoVideo.find(vids).map(&:feature)
+      when 'delete': VideoVideo.find(vids).map(&:destroy)
+      end
+    end
+    
+
     @tbl = video_table_generate(params,:order => 'created_at DESC')
     render :partial => 'video_table' if display
   end
