@@ -5,6 +5,7 @@ class Video::PageRenderer < ParagraphRenderer
   paragraph :user_list
   paragraph :user_view
   paragraph :search
+  paragraph :upload
 
   def user_list
     @options = paragraph_options :user_list
@@ -49,6 +50,17 @@ class Video::PageRenderer < ParagraphRenderer
 
     render_paragraph :feature => :video_page_search
 
+  end
+
+  def upload
+    @video = VideoVideo.new(:receive_updates => true)
+    handle_file_upload(params[:video],:file_id)
+    if request.post? && params[:video] && @video.update_attributes(params[:video].slice(:name,:email,:terms,:receive_updates,:zip,:file_id))
+      @video.run_worker(:handle_video_upload)
+      @uploaded = true
+    end
+
+    render_paragraph :feature => :video_page_upload
   end
 
 end

@@ -7,7 +7,9 @@ class Video::UploadController < ApplicationController
   def index
     handle_file_upload(params,:media)
 
-    video = VideoVideo.create(:email => params[:email],
+    video = VideoVideo.create(:name => params[:name],
+                              :email => params[:email],
+                              :terms => true,
                               :file_id => params[:media])
 
     video.run_worker(:handle_video_upload)

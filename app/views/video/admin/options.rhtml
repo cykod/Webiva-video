@@ -5,6 +5,8 @@
   <%= f.text_field :user_name, :label => 'User' %>
   <%= f.password_field :password, :label => 'Password' %>
   <%= f.select :email_template_id, MailTemplate.site_template_options, :include_blank => true,:description => '%%link%%,%%url%%' %>
+  <%= f.select :admin_email_template_id, MailTemplate.site_template_options, :include_blank => true,:description => '%%link%%,%%url%%' %>
+  <%= f.text_field :admin_email %>
   <%= f.url_selector :edit_page_url %>
   <%= f.text_area :categories, :description => 'Available Categories - One per line' %>
   <%= f.text_area :descriptions, :description => 'Available Descriptions - One per line' %>

@@ -55,7 +55,9 @@ class Video::AdminController < ModuleController
                 :developer_key => 'Enter developer key',
                 :user_name => 'Enter user name',
                 :password => 'Password',
-                :email_template_id => 'Select email template',
+                :email_template_id => nil,
+                :admin_email_template_id => nil,
+                :admin_email => '',
                 :edit_page_url => nil, 
                 :categories => nil,
                 :descriptions => nil
@@ -65,6 +67,7 @@ class Video::AdminController < ModuleController
     validates_presence_of :password
     validates_presence_of :provider
     validates_presence_of :email_template_id
+    validates_presence_of :admin_email_template_id
 
     def category_options
       self.categories.to_s.split("\n").map(&:strip).reject(&:blank?)
@@ -77,6 +80,10 @@ class Video::AdminController < ModuleController
 
     def email_template
       @email_template ||= MailTemplate.find_by_id(self.email_template_id)
+    end
+
+    def admin_email_template
+      @admin_email_template ||= MailTemplate.find_by_id(self.admin_email_template_id)
     end
   end
 

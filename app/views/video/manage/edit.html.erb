@@ -1,7 +1,11 @@
 <div class='admin_content'>
+  <div style='float:left; padding-right:30px;'>
+    <iframe width='420' height='320' src='http://www.youtube.com/embed/<%= @video.provider_file_id %>?rel=0' frameborder='0' allowfullscreen></iframe>
+  </div>
   <% admin_form_for :video, @video, :multipart=>true do |f| -%>
     <%= f.text_field :name, :required => true %>
-    <%= f.text_field :email, :required => true %>
+    <%= f.radio_buttons :moderated, VideoVideo.moderated_select_options %>
+        <%= f.text_field :email, :required => true %>
     <%= f.radio_buttons :featured, [['Yes',true],['No',false]], :description => 'List video on the featured video page' %>
     <%= f.text_area :description, :rows => 8, :cols => 40 %>
     <%= f.filemanager_file :file_id %>

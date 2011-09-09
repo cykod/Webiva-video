@@ -5,6 +5,7 @@ class Video::PageController < ParagraphController
   editor_for :user_list, :name => "List Videos", :feature => :video_page_user_list
   editor_for :user_view, :name => "Display Video", :feature => :video_page_user_view, :inputs => [[ :video_id, "Video Id", :path ]] 
   editor_for :search, :name => "Search Videos", :feature => :video_page_search
+  editor_for :upload, :name => "Upload Video", :feature => :video_page_upload, :no_options => true
 
   class UserListOptions < HashModel
     # Paragraph Options
@@ -43,5 +44,6 @@ class Video::PageController < ParagraphController
                   fld(:per_page,:text_field) # <attribute>, <form element>, <options>
                  )
   end
+
 
 end

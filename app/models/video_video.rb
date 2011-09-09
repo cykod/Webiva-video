@@ -4,9 +4,12 @@ class VideoVideo < DomainModel
   has_content_tags
 
   validates_presence_of :email
+  validates_presence_of :terms
 
-  before_create :generate_video_hash, :assign_name
+  before_create :generate_video_hash
+  after_create :save_end_user
   after_update :update_meta_data
+  after_destroy :destroy_video
 
   named_scope :with_end_user, lambda { |user| {:conditions => {:end_user_id=>user.id} } }
   named_scope :approved , { :conditions => ['moderated > 0'] }
@@ -16,6 +19,12 @@ class VideoVideo < DomainModel
   has_options :moderated, [['Unmoderated',0],['Approved',1],['Rejected',-1],['Error',-2]]
 
   attr_accessor :description_other
+  attr_accessor :zip
+  attr_accessor :receive_updates
+  attr_accessor :terms
+
+  validate_on_create :ensure_file
+
 
   named_scope(:by_category, Proc.new { |cat| 
     {:conditions => { :category => cat } }
@@ -72,10 +81,6 @@ class VideoVideo < DomainModel
 
   def self.top_tags
     VideoVideo.tag_cloud[0..5].map { |t| t[:name] }
-  end
-
-  def assign_name 
-    self.name = self.file.name
   end
 
   def upload_video
@@ -139,7 +144,10 @@ class VideoVideo < DomainModel
     begin
       @client.video_update(self.provider_file_id,:title => self.name, :description => self.description, :category => 'People', :keywords => self.tags_array, :list => self.moderate_value)
     rescue Exception => e
-      self.update_attribute(:moderated,-2)
+      unless @couldnt_save
+        self.update_attribute(:moderated,-2)
+        @couldnt_save = true
+      end
     end
   end
 
@@ -147,6 +155,7 @@ class VideoVideo < DomainModel
     opt = Video::AdminController.module_options
     @client = YouTubeIt::Client.new(:username => opt.user_name, :password => opt.password, :dev_key => opt.developer_key)
   end
+
 
   def moderate_value
     if self.moderated == 1
@@ -164,11 +173,38 @@ class VideoVideo < DomainModel
       atr['link'] = "<a href='#{atr['url']}'>#{atr['url']}</a>"
       opts.email_template.deliver_to_address(self.email,atr)
     end
+    if(opts.admin_email_template)
+      opts.admin_email_template.deliver_to_address(opts.admin_email,self.attributes)
+    end
   end
 
 
   def handle_video_upload(args = {})
     self.upload_video
+  end
+
+  def destroy_video
+    provider_connect
+    begin
+      @client.video_delete(self.provider_file_id)
+    rescue Exception => e
+      # Could not delete video
+    end
+  end
+
+  def save_end_user
+    EndUser.push_target(self.email,:name => self.name,:zip => self.zip) unless self.receive_updates.to_i != 1
+  end
+
+
+  def ensure_file
+    if !self.file
+      self.errors.add(:file_id,'is missing')
+    elsif !%w(avi mov m4v).include?(self.file.extension.to_s.downcase)
+      self.errors.add(:file_id,'is not a valid video file')
+      self.file.destroy
+      self.file_id = nil
+    end
   end
 
 end

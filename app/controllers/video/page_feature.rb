@@ -99,6 +99,43 @@ class Video::PageFeature < ParagraphFeature
       c.pagelist_tag('videos:pages') { |t| data[:pages] }
     end
   end
+
+ feature :video_page_upload, :default_feature =>  <<-FEATURE
+ <cms:upload>
+ <cms:errors/>
+    <cms:name/>
+    <cms:email/> <cms:zip/>
+    <cms:file_id/>
+    <label><cms:terms/> I agree to the Terms and conditions of this site</label>
+    <label><cms:receive_updates/> I would like to receive email updates from  "Friend a Nurse"</label>
+    <cms:submit/>
+  </cms:upload>
+  <cms:uploaded>
+  Thank you! Your video has been uploaded.
+
+  </cms:uploaded>
+
+ FEATURE
+
+
+  def video_page_upload_feature(data)
+    webiva_feature(:video_page_upload) do |c|
+      c.form_for_tag('upload','video', :html => { :method => 'post', :enctype => 'multipart/form-data' }) { |t| data[:uploaded] ? nil : data[:video] }
+      c.form_error_tag('upload:errors')
+      c.field_tag('upload:name') 
+      c.field_tag('upload:email')
+      c.field_tag('upload:zip')
+      c.field_tag('upload:file_id',:control => 'upload_document')
+      c.field_tag('upload:terms', :control => 'check_box')
+      c.field_tag('upload:receive_updates', :control => 'check_box')
+
+      c.submit_tag('upload:submit') 
+      c.expansion_tag('uploaded') { |t| data[:uploaded] }
+    end
+  end
+
+
+
   
 
 end
