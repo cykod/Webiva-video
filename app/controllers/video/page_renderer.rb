@@ -26,6 +26,7 @@ class Video::PageRenderer < ParagraphRenderer
       conn_type,conn_id = page_connection
       @video = VideoVideo.approved.find(conn_id)
     end
+    set_title(@video.name) if @video
 
     render_paragraph :feature => :video_page_user_view
 
@@ -54,7 +55,7 @@ class Video::PageRenderer < ParagraphRenderer
 
   def upload
     @video = VideoVideo.new(:receive_updates => true)
-    handle_file_upload(params[:video],:file_id)
+    handle_file_upload(params[:video],:file_id) if params[:video]
     if request.post? && params[:video] && @video.update_attributes(params[:video].slice(:name,:email,:terms,:receive_updates,:zip,:file_id))
       @video.run_worker(:handle_video_upload)
       @uploaded = true
