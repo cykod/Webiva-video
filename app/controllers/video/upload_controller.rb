@@ -9,6 +9,8 @@ class Video::UploadController < ApplicationController
 
     video = VideoVideo.create(:name => params[:name],
                               :email => params[:email],
+                              :recipient => params[:recipient],
+                              :city => params[:city],
                               :terms => true,
                               :file_id => params[:media])
 
