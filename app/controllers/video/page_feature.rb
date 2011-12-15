@@ -51,6 +51,8 @@ class Video::PageFeature < ParagraphFeature
       c.h_tag('video:user') { |t| t.locals.video.end_user ? t.locals.video.end_user.name : ''} 
       c.define_tag('video:image') { |t| image_tag "http://img.youtube.com/vi/#{t.locals.video.provider_file_id}/0.jpg", t.attr  } 
       c.h_tag('video:name') { |t| h t.locals.video.name }
+      c.h_tag('video:city') { |t| h t.locals.video.city}
+      c.h_tag('video:recipient') { |t| h t.locals.video.recipient}
       c.define_tag('video:player') { |t| 
          width = t.attr['width'] || 425
          height = t.attr['height'] || 350
@@ -104,7 +106,8 @@ class Video::PageFeature < ParagraphFeature
  <cms:upload>
  <cms:errors/>
     <cms:name/>
-    <cms:email/> <cms:zip/>
+    <cms:email/> <cms:zip placeholder='Zip'/>
+    <cms:recipient/> <cms:city placeholder='City'/>
     <cms:file_id/>
     <label><cms:terms/> I agree to the Terms and conditions of this site</label>
     <label><cms:receive_updates/> I would like to receive email updates from  "Friend a Nurse"</label>
@@ -123,6 +126,8 @@ class Video::PageFeature < ParagraphFeature
       c.form_for_tag('upload','video', :html => { :method => 'post', :enctype => 'multipart/form-data' }) { |t| data[:uploaded] ? nil : data[:video] }
       c.form_error_tag('upload:errors')
       c.field_tag('upload:name') 
+      c.field_tag('upload:recipient') 
+      c.field_tag('upload:city') 
       c.field_tag('upload:email')
       c.field_tag('upload:zip')
       c.field_tag('upload:file_id',:control => 'upload_document')

@@ -5,6 +5,9 @@ class VideoVideo < DomainModel
 
   validates_presence_of :email
   validates_presence_of :terms, :if => Proc.new {|v| v.manual }
+  validates_presence_of :city
+  validates_presence_of :recipient
+
 
   before_create :generate_video_hash
   after_create :save_end_user
@@ -25,6 +28,8 @@ class VideoVideo < DomainModel
   attr_accessor :manual
 
   validate_on_create :ensure_file
+
+  before_save :update_keywords
 
 
   named_scope(:by_category, Proc.new { |cat| 
@@ -102,7 +107,7 @@ class VideoVideo < DomainModel
   end
 
   def content_node_body(language) 
-    ((self.attributes.slice('name','created_at','category','description')).values + [ self.tag_names ]).join(" ")
+    ((self.attributes.slice('name','created_at','category','description','recipient','city')).values + [ self.tag_names ]).join(" ")
   end
 
   def content_description(language)
