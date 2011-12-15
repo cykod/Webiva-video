@@ -2,8 +2,9 @@
   <% active_tr 'video',t.id do |tr| -%>
     <td><%= tr.checkbox -%></td>
     <td><%= link_to h(t.name), :action => 'edit',:path => [ t.id ] -%></td>
+    <td><%= h(t.recipient) %></td>
+    <td><%= h(t.city) %></td>
     <td><%= t.featured ? 'Yes' : 'No' -%></td>
-    <td><%= t.description -%></td>
     <td><%= t.email -%></td>
     <td><%= t.created_at.to_s(:short) -%></td>
     <td><%= t.moderated_display  -%></td>
