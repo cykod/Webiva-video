@@ -87,6 +87,10 @@ class VideoVideo < DomainModel
     VideoVideo.tag_cloud[0..5].map { |t| t[:name] }
   end
 
+  def title
+     variable_replace(Video::AdminController.module_options.title_str,self.attributes)
+  end
+
   def upload_video
     provider_connect         
     video = @client.video_upload(File.open(self.file.filename), :title => self.file.name, :category => 'People', :list => self.moderate_value)

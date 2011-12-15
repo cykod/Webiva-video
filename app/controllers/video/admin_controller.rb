@@ -59,6 +59,7 @@ class Video::AdminController < ModuleController
                 :admin_email_template_id => nil,
                 :admin_email => '',
                 :edit_page_url => nil, 
+                :title_str => "For %%recipient%%, %%city%% from %%name%%",
                 :categories => nil,
                 :descriptions => nil
 
