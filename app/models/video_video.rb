@@ -29,8 +29,6 @@ class VideoVideo < DomainModel
 
   validate_on_create :ensure_file
 
-  before_save :update_keywords
-
 
   named_scope(:by_category, Proc.new { |cat| 
     {:conditions => { :category => cat } }
