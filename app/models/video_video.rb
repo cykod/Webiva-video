@@ -4,7 +4,7 @@ class VideoVideo < DomainModel
   has_content_tags
 
   validates_presence_of :email
-  validates_presence_of :terms
+  validates_presence_of :terms, :if => Proc.new {|v| v.manual }
 
   before_create :generate_video_hash
   after_create :save_end_user
@@ -22,6 +22,7 @@ class VideoVideo < DomainModel
   attr_accessor :zip
   attr_accessor :receive_updates
   attr_accessor :terms
+  attr_accessor :manual
 
   validate_on_create :ensure_file
 
@@ -141,14 +142,7 @@ class VideoVideo < DomainModel
 
   def update_meta_data
     provider_connect 
-    begin
       @client.video_update(self.provider_file_id,:title => self.name, :description => self.description, :category => 'People', :keywords => self.tags_array, :list => self.moderate_value)
-    rescue Exception => e
-      unless @couldnt_save
-        self.update_attribute(:moderated,-2)
-        @couldnt_save = true
-      end
-    end
   end
 
   def provider_connect
@@ -169,7 +163,7 @@ class VideoVideo < DomainModel
     opts = Video::AdminController.module_options
     if(opts.email_template)
       atr = self.attributes
-      atr['url'] = Configuration.domain_link(SiteNode.link(opts.edit_page_url,self.id.to_s)) + "?video_hash=#{self.video_hash}"
+      atr['url'] = Configuration.domain_link(SiteNode.link(opts.edit_page_url,self.id.to_s) + "?video_hash=#{self.video_hash}")
       atr['link'] = "<a href='#{atr['url']}'>#{atr['url']}</a>"
       opts.email_template.deliver_to_address(self.email,atr)
     end
