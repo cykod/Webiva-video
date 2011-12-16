@@ -6,8 +6,6 @@ class VideoVideo < DomainModel
   validates_presence_of :email
   validates_presence_of :terms, :if => Proc.new {|v| v.manual }
   validates_presence_of :city
-  validates_presence_of :recipient
-
 
   before_create :generate_video_hash
   after_create :save_end_user
@@ -93,7 +91,7 @@ class VideoVideo < DomainModel
 
   def upload_video
     provider_connect         
-    video = @client.video_upload(File.open(self.file.filename), :title => self.file.name, :category => 'People', :list => self.moderate_value)
+    video = @client.video_upload(File.open(self.file.filename), :title => self.title, :category => 'People', :list => self.moderate_value)
     self.provider_file_id = video.unique_id
     self.provider = 'youtube'
     if(video) 
@@ -149,7 +147,7 @@ class VideoVideo < DomainModel
 
   def update_meta_data
     provider_connect 
-      @client.video_update(self.provider_file_id,:title => self.name, :description => self.description, :category => 'People', :keywords => self.tags_array, :list => self.moderate_value)
+      @client.video_update(self.provider_file_id,:title => self.title, :description => self.description, :category => 'People', :keywords => self.tags_array, :list => self.moderate_value)
   end
 
   def provider_connect

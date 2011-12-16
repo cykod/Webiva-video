@@ -56,7 +56,7 @@ class Video::PageFeature < ParagraphFeature
       c.define_tag('video:player') { |t| 
          width = t.attr['width'] || 425
          height = t.attr['height'] || 350
-         "<iframe width='#{width}' height='#{height}' src='http://www.youtube.com/embed/#{t.locals.video.provider_file_id}?rel=0' frameborder='0' allowfullscreen></iframe>"
+         "<iframe width='#{width}' height='#{height}' src='http://www.youtube.com/embed/#{t.locals.video.provider_file_id}?rel=0&wmode=transparent' frameborder='0' allowfullscreen></iframe>"
       }
 
   end
