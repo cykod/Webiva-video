@@ -34,7 +34,7 @@ class Video::PageRenderer < ParagraphRenderer
 
 
   class VideoSearch < HashModel
-    attributes :query => nil, :category => nil, :tags => nil
+    attributes :query => nil, :category => nil, :tags => nil, :state => nil
 
 
   end
