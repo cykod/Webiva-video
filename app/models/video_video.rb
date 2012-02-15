@@ -56,6 +56,7 @@ class VideoVideo < DomainModel
     scope = VideoVideo.approved
 
     scope = scope.by_content(options[:query]) if options[:query].present?
+    scope = scope.by_state(options[:state]) if options[:state].present?
     scope = scope.by_category(options[:category]) if options[:category].present?
     scope = scope.by_tags(options[:tags]) if options[:tags].present? && options[:tags].reject(&:blank?).length > 0
 
