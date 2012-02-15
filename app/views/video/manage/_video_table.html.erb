@@ -3,7 +3,7 @@
     <td><%= tr.checkbox -%></td>
     <td><%= link_to h(t.name), :action => 'edit',:path => [ t.id ] -%></td>
     <td><%= h(t.recipient) %></td>
-    <td><%= h(t.city) %></td>
+    <td><%= h(t.state) %></td>
     <td><%= t.featured ? 'Yes' : 'No' -%></td>
     <td><%= t.email -%></td>
     <td><%= t.created_at.to_s(:short) -%></td>

@@ -5,7 +5,7 @@ class VideoVideo < DomainModel
 
   validates_presence_of :email
   validates_presence_of :terms, :if => Proc.new {|v| v.manual }
-  validates_presence_of :city
+  validates_presence_of :state
 
   before_create :generate_video_hash
   after_create :save_end_user
@@ -13,6 +13,7 @@ class VideoVideo < DomainModel
   after_destroy :destroy_video
 
   named_scope :with_end_user, lambda { |user| {:conditions => {:end_user_id=>user.id} } }
+  named_scope :by_state, lambda { |state| { :conditions => { :state => state } }
   named_scope :approved , { :conditions => ['moderated > 0'] }
 
   content_node :push_value => true 
@@ -107,7 +108,7 @@ class VideoVideo < DomainModel
   end
 
   def content_node_body(language) 
-    ((self.attributes.slice('name','created_at','category','description','recipient','city')).values + [ self.tag_names ]).join(" ")
+    ((self.attributes.slice('name','created_at','category','description','recipient','state')).values + [ self.tag_names ]).join(" ")
   end
 
   def content_description(language)

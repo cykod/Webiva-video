@@ -7,7 +7,7 @@ class Video::ManageController < ModuleController
     "Video" =>  {:action => 'index'}
 
   active_table :video_table, VideoVideo, 
-     [:check, :name, :recipient, :city, :featured, :email, :created_at, :moderated]
+     [:check, :name, :recipient, :state, :featured, :email, :created_at, :moderated]
 
   def display_video_table(display=true)
 

@@ -51,7 +51,7 @@ class Video::PageFeature < ParagraphFeature
       c.h_tag('video:user') { |t| t.locals.video.end_user ? t.locals.video.end_user.name : ''} 
       c.define_tag('video:image') { |t| image_tag "http://img.youtube.com/vi/#{t.locals.video.provider_file_id}/0.jpg", t.attr  } 
       c.h_tag('video:name') { |t| h t.locals.video.name }
-      c.h_tag('video:city') { |t| h t.locals.video.city}
+      c.h_tag('video:state') { |t| h t.locals.video.state}
       c.h_tag('video:recipient') { |t| h t.locals.video.recipient}
       c.define_tag('video:player') { |t| 
          width = t.attr['width'] || 425
@@ -89,6 +89,7 @@ class Video::PageFeature < ParagraphFeature
     webiva_feature(:video_page_search) do |c|
       c.form_for_tag('search','q', :html => { :method => 'get' }) { |t| data[:search] }
       c.field_tag('search:query') 
+      c.field_tag('search:state', :control => 'select')  { |t| [['State', nil]] + Content::CoreField::UsStateField.states_select_options }
       c.field_tag('search:category', :control => 'select')  { |t| [['--Select Category--',nil]] + VideoVideo.category_options }
       c.field_tag('search:tags',:control => 'check_boxes') { |t| VideoVideo.top_tags }
       c.submit_tag('search:submit') 
@@ -107,7 +108,7 @@ class Video::PageFeature < ParagraphFeature
  <cms:errors/>
     <cms:name/>
     <cms:email/> <cms:zip placeholder='Zip'/>
-    <cms:recipient/> <cms:city placeholder='City'/>
+    <cms:recipient/> <cms:state placeholder='State'/>
     <cms:file_id/>
     <label><cms:terms/> I agree to the Terms and conditions of this site</label>
     <label><cms:receive_updates/> I would like to receive email updates from  "Friend a Nurse"</label>
@@ -127,7 +128,7 @@ class Video::PageFeature < ParagraphFeature
       c.form_error_tag('upload:errors')
       c.field_tag('upload:name') 
       c.field_tag('upload:recipient') 
-      c.field_tag('upload:city') 
+      c.field_tag('upload:state', :control => 'select')  { |t| [['State', nil]] + Content::CoreField::UsStateField.states_select_options }
       c.field_tag('upload:email')
       c.field_tag('upload:zip')
       c.field_tag('upload:file_id',:control => 'upload_document')
