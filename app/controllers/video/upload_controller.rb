@@ -14,9 +14,12 @@ class Video::UploadController < ApplicationController
                               :terms => "1",
                               :file_id => params[:media])
 
-    video.run_worker(:handle_video_upload)
-
-    render :json => { :status => 'ok' }
+    if video.valid?
+      video.run_worker(:handle_video_upload)
+      render :json => { :status => 'ok' }
+    else
+      render :json => { :status => 'error', :errors => video.errors_messages.full_messages }
+    end
   end
 
 end
