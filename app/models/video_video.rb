@@ -4,7 +4,6 @@ class VideoVideo < DomainModel
   has_content_tags
 
   validates_presence_of :email
-  validates_presence_of :terms, :if => Proc.new {|v| v.manual }
   validates_presence_of :state
 
   before_create :generate_video_hash
@@ -199,6 +198,7 @@ class VideoVideo < DomainModel
 
 
   def ensure_file
+    self.errors.add(:terms,'must be checked') if self.terms.to_i != 1 && self.manual
     if !self.file
       self.errors.add(:file_id,'is missing')
     elsif !%w(avi mov m4v).include?(self.file.extension.to_s.downcase)

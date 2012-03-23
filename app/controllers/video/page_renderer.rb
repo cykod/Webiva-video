@@ -55,6 +55,7 @@ class Video::PageRenderer < ParagraphRenderer
 
   def upload
     @video = VideoVideo.new(:receive_updates => true, :manual => true)
+    @video.manual = true
     handle_file_upload(params[:video],:file_id) if params[:video]
     if request.post? && params[:video] && @video.update_attributes(params[:video].slice(:name,:email,:terms,:receive_updates,:zip,:file_id,:recipient,:state))
       @video.run_worker(:handle_video_upload)
