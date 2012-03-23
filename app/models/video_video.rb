@@ -13,7 +13,7 @@ class VideoVideo < DomainModel
   after_destroy :destroy_video
 
   named_scope :with_end_user, lambda { |user| {:conditions => {:end_user_id=>user.id} } }
-  named_scope :by_state, lambda { |state| { :conditions => { :state => state } }
+  named_scope :by_state, lambda { |state| { :conditions => { :state => state } } }
   named_scope :approved , { :conditions => ['moderated > 0'] }
 
   content_node :push_value => true 
