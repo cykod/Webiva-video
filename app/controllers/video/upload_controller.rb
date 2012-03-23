@@ -18,7 +18,7 @@ class Video::UploadController < ApplicationController
       video.run_worker(:handle_video_upload)
       render :json => { :status => 'ok' }
     else
-      render :json => { :status => 'error', :errors => video.errors_messages.full_messages }
+      render :json => { :status => 'error', :errors => video.errors.full_messages }
     end
   end
 
