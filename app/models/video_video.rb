@@ -204,7 +204,7 @@ class VideoVideo < DomainModel
     self.errors.add(:terms,'must be checked') if self.terms.to_i != 1 && self.manual
     if !self.file
       self.errors.add(:file_id,'is missing')
-    elsif !%w(avi mov m4v 3gp).include?(self.file.extension.to_s.downcase)
+    elsif !%w(avi mov m4v 3gp mp4).include?(self.file.extension.to_s.downcase)
       self.errors.add(:file_id,'is not a valid video file')
       self.file.destroy
       self.file_id = nil
